@@ -1,0 +1,16 @@
+xp.ranks = {
+    [1] = {name = "Newcomer", color = "#D3D3D3", range = {1, 3}},
+    [2] = {name = "Aspirant", color = "#87CEEB", range = {4, 6}},
+    [3] = {name = "Freshman", color = "#98FB98", range = {7, 9}},
+    [4] = {name = "Wayfarer", color = "#FFFACD", range = {10, 12}},
+    [5] = {name = "Voyager", color = "#FFD700", range = {13, 15}},
+    [6] = {name = "Trailblazer", color = "#FF6347", range = {16, 18}},
+    [7] = {name = "Citizen", color = "#9370DB", range = {19, 21}},
+    [8] = {name = "Veteran", color = "#0071e6", range = {22, 24}},
+    [9] = {name = "Master", color = "#008000", range = {25, 27}},
+    [10] = {name = "Hero", color = "#FFD700", range = {28, 30}},
+    [11] = {name = "Legend", color = "#800080", range = {31, 33}},
+    [12] = {name = "Mythic", color = "#8B0000", range = {34, 36}},
+    [13] = {name = "Supreme Master", color = "#2F4F4F", range = {37, 42}},
+    [14] = {name = "Champion", color = "#FFD700", range = {43, math.huge}},
+}
