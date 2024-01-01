@@ -2,7 +2,9 @@ License of source code
 ----------------------
 
 The MIT License (MIT)
-Copyright (C) 2023 Flay Krunegan, David Leal
+
+Copyright (C) 2023 Flay Krunegan\
+Copyright (C) 2023 David Leal (halfpacho@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -21,18 +23,19 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 For more details:
-https://opensource.org/licenses/MIT
-
+<https://opensource.org/licenses/MIT>
 
 Licenses of media (textures)
 ----------------------------
 
-Attribution 4.0 International (CC BY 4.0)
+Attribution 4.0 International (CC BY 4.0)\
 Copyright (C) 2023 Flay Krunegan
 
 You are free to:
-Share — copy and redistribute the material in any medium or format.
+
+Share — copy and redistribute the material in any medium or format.\
 Adapt — remix, transform, and build upon the material for any purpose, even commercially.
+
 The licensor cannot revoke these freedoms as long as you follow the license terms.
 
 Under the following terms:
@@ -53,6 +56,6 @@ for your intended use. For example, other rights such as publicity, privacy, or 
 rights may limit how you use the material.
 
 For more details:
-https://creativecommons.org/licenses/by/4.0/
+<https://creativecommons.org/licenses/by/4.0/>
 
-xp_shop_bg.png <a href="https://www.freepik.com/free-photo/brown-wooden-textured-flooring-background_17848009.htm#query=dark%20wod%20texture&position=0&from_view=search&track=ais&uuid=8d80eebd-9467-4cc8-b528-bb508f4b48ad">Image by rawpixel.com</a> on Freepik
+`xp_shop_bg.png` [Image by rawpixel.com](https://www.freepik.com/free-photo/brown-wooden-textured-flooring-background_17848009.htm#query=dark%20wod%20texture&position=0&from_view=search&track=ais&uuid=8d80eebd-9467-4cc8-b528-bb508f4b48ad) on Freepik
