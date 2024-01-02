@@ -345,7 +345,7 @@ end)
 minetest.register_on_dignode(function(pos, oldnode, digger)
 	local XP = xp.values[oldnode.name]
 	if digger then
-		if digger.is_fake_player then return end
+		if digger:is_player() ~= true then return end
 		local name = digger:get_player_name()
 		local itemstack = digger:get_wielded_item()
 		for _, tool in ipairs(forbidden_tools) do

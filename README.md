@@ -165,5 +165,4 @@ Note: HUD is not 100% working.
 
 ## License
 
-* MIT License (MIT) for the code.
-* Attribution 4.0 International (CC BY 4.0) for textures.
+See the [`LICENSE.md`](LICENSE.md) file for full information.
