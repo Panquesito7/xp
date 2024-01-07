@@ -1,4 +1,4 @@
--- Override the `on_death` functions of all Mobs Redo monsters and give the player XP.
+-- Overrides the `on_die` functions of all Mobs Redo monsters and gives the player XP.
 -- To discuss: XP assisting.
 
 local mobs = {
@@ -51,12 +51,13 @@ minetest.register_on_mods_loaded(function()
             registered_entity.on_die = function(self, pos)
                 local player = self.cause_of_death and self.cause_of_death.puncher
                 if player and player:is_player() then
-                    local player_name = self.cause_of_death.puncher:get_player_name()
+                    local player_name = player:get_player_name()
                     local mob_name = mob.name or ""
-                    local mob_xp_amount = xp_amounts[mob.id] or xp_amount
+                    local mob_xp_amount = xp_amounts[mob.id] or 5
                     minetest.chat_send_player(player_name, "*** Server: you've killed a ".. minetest.colorize("orange", mob_name).." and earned ".. minetest.colorize("#1fe600", mob_xp_amount) .. " XP!")
                     xp.add_xp(player, mob_xp_amount)
                 end
+
                 if old_on_die then
                     return old_on_die(self, pos)
                 end

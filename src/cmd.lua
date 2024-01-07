@@ -245,6 +245,7 @@ end
 minetest.register_privilege("xp_manager", {
 	description = "Manage players XP",
 	give_to_singleplayer = false,
+	give_to_admin = true
 })
 
 minetest.register_chatcommand("xp",{

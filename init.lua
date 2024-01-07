@@ -9,4 +9,4 @@ dofile(lane.."/src/unified_inventory.lua")
 
 local done = (minetest.get_us_time() - init) / 1000000
 
-print('[XP mod] loaded.. [' .. done .. 's]')
+minetest.log("action", "[XP mod] loaded.. [" .. done .. "s]")
