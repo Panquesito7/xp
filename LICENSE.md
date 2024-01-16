@@ -33,7 +33,7 @@ Copyright (C) 2023 Flay Krunegan
 
 You are free to:
 
-Share — copy and redistribute the material in any medium or format.\
+Share — copy and redistribute the material in any medium or format for any purpose, even commercially.\
 Adapt — remix, transform, and build upon the material for any purpose, even commercially.
 
 The licensor cannot revoke these freedoms as long as you follow the license terms.
