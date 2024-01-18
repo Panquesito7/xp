@@ -1,5 +1,5 @@
 local init = minetest.get_us_time()
-local lane = minetest.get_modpath('xp')
+local lane = minetest.get_modpath(minetest.get_current_modname())
 
 dofile(lane.."/src/main.lua")
 dofile(lane.."/src/cmd.lua")

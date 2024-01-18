@@ -176,26 +176,25 @@ It's worth noting that the store functions offline, sellers can list their items
 ]]
 
 modsTxT = [[
-List of supported mods:
+All of the mods listed below are supported but optional. To experience the maximum potential of the mod, we recommend having Mobs Monster/Bat/Spawners, Default, More Ores, Farming, Wool, and other supported MTG mods.
 
-1. default (required)
-2. wool (required)
-3. farming (required)
-4. doors (required)
-5. bucket (required)
-6. carts (required)
-7. fire (required)
-8. xpanes (required)
+1. default (optional)
+2. wool (optional)
+3. farming (optional)
+4. doors (optional)
+5. bucket (optional)
+6. carts (optional)
+7. fire (optional)
+8. xpanes (optional)
 9. unified_inventory (optional)
-10. mobs (required)
-11. mobs_monster (required)
-12. mobs_bat (optional)
-13. spawners_mobs (optional)
-14. legendary_ore (optional)
-15. rainbow_ore (optional)
-16. moreores (optional)
-17. lapis (optional)
-18. atium (optional)
+10. mobs_monster (optional)
+11. mobs_bat (optional)
+12. spawners_mobs (optional)
+13. legendary_ore (optional)
+14. rainbow_ore (optional)
+15. moreores (optional)
+16. lapis (optional)
+17. atium (optional)
 ]]
 
 local mainFormspec = "size[8,8]" ..

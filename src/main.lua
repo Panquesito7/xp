@@ -93,7 +93,7 @@ function xp.add_xp(player, XP)
             })
         end
         local reward = xp.get_reward(level)
-        if reward then
+        if reward and minetest.registered_items[reward.name] then
             minetest.chat_send_player(name, "*** Server: You've reached level " ..
                 minetest.colorize("#01B5F7", level) .. " and received " ..
                 minetest.colorize("orange", reward.name) .. minetest.colorize("yellow", " x" .. reward.count))
