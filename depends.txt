@@ -7,8 +7,7 @@ carts
 fire
 xpanes
 unified_inventory?
-mobs
-mobs_monster
+mobs_monster?
 mobs_bat?
 spawners_mobs?
 legendary_ore?
