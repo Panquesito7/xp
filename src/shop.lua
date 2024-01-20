@@ -33,6 +33,12 @@ minetest.register_chatcommand("sell", {
             local wielded_itemstack = player:get_wielded_item()
             local item_name = wielded_itemstack:get_name()
             local item_count = wielded_itemstack:get_count()
+
+            if minetest.registered_items[item_name] == nil then
+                minetest.chat_send_player(name, "*** XP SHOP: Item not found.")
+                return
+            end
+
             if item_name ~= "air" and item_count > 0 then
                 local price = tonumber(param)
                 if price and price > 0 and price <= 4999 then
@@ -73,7 +79,15 @@ function truncate_string(str, max_length)
     end
 end
 
-function show_shop_formspec(player)
+function show_shop_formspec(player, show_back_button, back_btn_pos)
+    if show_back_button == nil then
+        show_back_button = false
+    end
+
+    if back_btn_pos == nil then
+        back_btn_pos = { x = 8, y = 7.6 }
+    end
+
     local player_name = player:get_player_name()
     local formspec = "size[11,8]"..
         "bgcolor[#080808BB;true]" ..
@@ -85,7 +99,7 @@ function show_shop_formspec(player)
     local end_index = math.min(current_page * items_per_page, #shop_items)
     for index = start_index, end_index do
         local item = shop_items[index]
-        local itemdef = minetest.registered_items[item.name]
+        local itemdef = item and minetest.registered_items[item.name]
         if itemdef then
             local relative_index = index - start_index
             local col_index = relative_index % items_per_row
@@ -115,8 +129,12 @@ function show_shop_formspec(player)
     local buyer_xp = xp.xp[player_name] or 0
     formspec = formspec ..
         "label[0,7.65;Page: " .. current_page .. "/" .. total_pages .. "]" ..
-        "label[2,7.65;Items: " .. #shop_items .. "]".. 
-        "label[4,7.65;Your XP: " .. buyer_xp .. "]" 
+        "label[2,7.65;Items: " .. #shop_items .. "]"..
+        "label[4,7.65;Your XP: " .. buyer_xp .. "]"
+
+    if show_back_button then
+        formspec = formspec .. "button[" .. back_btn_pos.x .. "," .. back_btn_pos.y .. ";3,0.8;xp_shop_exit;Back]"
+    end
 
     if current_page > 1 then
         formspec = formspec .. "image_button[7,7.6;2,0.8;xp_bg.png;prev_page;<==]"
@@ -124,7 +142,8 @@ function show_shop_formspec(player)
     if end_index < #shop_items then
         formspec = formspec .. "image_button[9,7.6;2,0.8;xp_bg.png;next_page;==>]"
     end
-    minetest.show_formspec(player_name, "shop", formspec)
+
+    return formspec
 end
 
 local pending_transactions = {}
@@ -150,58 +169,55 @@ end
 load_pending_transactions()
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname == "shop" then
-        local player_name = player:get_player_name()
-		if fields.quit then
-            return
-        end
-        if fields.prev_page then
-            current_page = math.max(current_page - 1, 1)
-        elseif fields.next_page then
-            current_page = current_page + 1
-        else
-            for index, item in ipairs(shop_items) do
-                local buy_button = "buy_" .. index
-                if fields[buy_button] then
-                    local buyer_xp = xp.xp[player_name] or 0
-                    local seller_name = item.seller                    
-                    if buyer_xp >= item.price or player_name == seller_name then
-                        xp.xp[player_name] = buyer_xp - item.price
-                        mod_storage:set_int(player_name .. "_xp", xp.xp[player_name])
-                        local seller_name = item.seller
+    if formname ~= "xp:shop" or is_player_on_shop(player) ~= true then
+        return false
+    end
+
+    local player_name = player:get_player_name()
+    if fields.prev_page then
+        current_page = math.max(current_page - 1, 1)
+    elseif fields.next_page then
+        current_page = current_page + 1
+    else
+        for index, item in ipairs(shop_items) do
+            local buy_button = "buy_" .. index
+            if fields[buy_button] then
+                local buyer_xp = xp.xp[player_name] or 0
+                local seller_name = item.seller
+                if buyer_xp >= item.price or player_name == seller_name then
+                    xp.xp[player_name] = buyer_xp - item.price
+                    mod_storage:set_int(player_name .. "_xp", xp.xp[player_name])
+                    local seller_name = item.seller
+                    local seller_player = minetest.get_player_by_name(seller_name)
+                    if seller_player then
+                        xp.xp[seller_name] = (xp.xp[seller_name] or 0) + item.price
+                        mod_storage:set_int(seller_name .. "_xp", xp.xp[seller_name])
+                        if player_name ~= seller_name then
+                            minetest.chat_send_player(seller_name, "*** XP SHOP: "..minetest.colorize("#01B5F7", seller_name) .. ", you received " .. minetest.colorize("green", item.price) .. " XP for your recent sales!")
+                        end
                         local seller_player = minetest.get_player_by_name(seller_name)
                         if seller_player then
-							xp.xp[seller_name] = (xp.xp[seller_name] or 0) + item.price
-							mod_storage:set_int(seller_name .. "_xp", xp.xp[seller_name])
-							if player_name ~= seller_name then
-                                minetest.chat_send_player(seller_name, "*** XP SHOP: "..minetest.colorize("#01B5F7", seller_name) .. ", you received " .. minetest.colorize("green", item.price) .. " XP for your recent sales!")
-                            end
-                            local seller_player = minetest.get_player_by_name(seller_name)
-							if seller_player then
-								xp.update_hud(seller_player, xp.level[seller_name], xp.xp[seller_name])
-							end
-                        else
-                            table.insert(pending_transactions, {seller = seller_name, xp = item.price})
-                            save_pending_transactions()
-                        end
-                        local buyer_inv = player:get_inventory()
-                        buyer_inv:add_item("main", ItemStack(item.name .. " " .. item.amount))
-                        table.remove(shop_items, index)
-                        save_shop_data()
-                        xp.update_hud(player, xp.level[player_name], xp.xp[player_name])
-                        if player_name ~= seller_name then
-                            minetest.chat_send_player(player_name, minetest.colorize("#259400", "*** XP SHOP: you have successfully purchased " .. item.name .. " x" .. item.amount ..", -"..item.price.." XP!"))
-                        else
-                            minetest.chat_send_player(player_name, minetest.colorize("orange", "*** XP SHOP: you have successfully removed " .. item.name .. " x" .. item.amount .." from the XP shop!"))
+                            xp.update_hud(seller_player, xp.level[seller_name], xp.xp[seller_name])
                         end
                     else
-                        minetest.chat_send_player(player_name, minetest.colorize("red", "*** XP SHOP: Not enough XP to purchase " .. item.name))
+                        table.insert(pending_transactions, {seller = seller_name, xp = item.price})
+                        save_pending_transactions()
                     end
-                    show_shop_formspec(player)
+                    local buyer_inv = player:get_inventory()
+                    buyer_inv:add_item("main", ItemStack(item.name .. " " .. item.amount))
+                    table.remove(shop_items, index)
+                    save_shop_data()
+                    xp.update_hud(player, xp.level[player_name], xp.xp[player_name])
+                    if player_name ~= seller_name then
+                        minetest.chat_send_player(player_name, minetest.colorize("#259400", "*** XP SHOP: you have successfully purchased " .. item.name .. " x" .. item.amount ..", -"..item.price.." XP!"))
+                    else
+                        minetest.chat_send_player(player_name, minetest.colorize("orange", "*** XP SHOP: you have successfully removed " .. item.name .. " x" .. item.amount .." from the XP shop!"))
+                    end
+                else
+                    minetest.chat_send_player(player_name, minetest.colorize("red", "*** XP SHOP: Not enough XP to purchase " .. item.name))
                 end
             end
         end
-        show_shop_formspec(player)
     end
 end)
 
@@ -227,13 +243,14 @@ minetest.register_on_joinplayer(function(player)
     end
 end)
 
-minetest.register_chatcommand("shop", {
-    params = "",
+minetest.register_chatcommand("xp_shop", {
     description = "Open the XP shop",
-    func = function(name, param)
-        local player = minetest.get_player_by_name(name)
-        if player then
-            show_shop_formspec(player)
+    func = function(name)
+		local player = minetest.get_player_by_name(name)
+		if player:is_player() ~= true then
+            return false
         end
+
+        minetest.show_formspec(name, "xp:shop", show_shop_formspec(player))
     end,
 })
