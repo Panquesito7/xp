@@ -208,7 +208,15 @@ function xp_top_list_function(name)
 	minetest.chat_send_player(name, output)
 end
 
-function xp_top_gui_function(name)
+function xp_top_gui_function(show_back_button, back_btn_pos)
+	if show_back_button == nil then
+		show_back_button = false
+	end
+
+	if back_btn_pos == nil then
+		back_btn_pos = { x = 5.2, y = 7.6 }
+	end
+
 	local players = {}
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local player_name = player:get_player_name()
@@ -228,18 +236,23 @@ function xp_top_gui_function(name)
 		.. "box[-0.1,-0.1;8,0.7;black]"
 		.. "background9[-0.350,-0.35;8.650,8.850;xp_shop_bg.png;true]"
 
+	if show_back_button then
+		formspec = formspec .. "button[" .. back_btn_pos.x .. "," .. back_btn_pos.y .. ";3,0.8;xp_top_exit;Back]"
+	end
+
 	for i, player in ipairs(players) do
 		if i <= 10 then
 			local player_name = player.name
 			local player_xp = player.xp
 			local player_level = player.level
-			local player_text = i .. ". "..minetest.colorize("#01B5F7", player_name) .. "  (" .. minetest.colorize("orange", "Level " .. player_level) .. ", " .. minetest.colorize("yellow", player_xp .. " XP") .. ")"
+			local player_text = i .. ". ".. minetest.colorize("#01B5F7", player_name) .. "  (" .. minetest.colorize("orange", "Level " .. player_level) .. ", " .. minetest.colorize("yellow", player_xp .. " XP") .. ")"
 			local y = 0.9 + (i - 1) * 0.5
-			formspec = formspec .. "label[0," .. y .. ";" .. player_text .. "]" 
+			formspec = formspec .. "label[0," .. y .. ";" .. player_text .. "]"
 				.. "box[-0.1,".. y ..";8,0.45;#030303]"
 		end
 	end
-	minetest.show_formspec(name, "xp:top", formspec)
+
+	return formspec
 end
 
 minetest.register_privilege("xp_manager", {
@@ -310,16 +323,21 @@ minetest.register_chatcommand("xp_leveldown", {
 })
 
 minetest.register_chatcommand("xp_top", {
-	params = "",
 	description = "EXP/Level TOP list (GUI)",
 	privs = {
 		interact = true
 	},
-	func = xp_top_gui_function,
+	func = function(name)
+		local player = minetest.get_player_by_name(name)
+		if player:is_player() ~= true then
+            return false
+        end
+
+		minetest.show_formspec(name, "xp:top", xp_top_gui_function())
+	end,
 })
 
 minetest.register_chatcommand("xp_top_list", {
-	params = "",
 	description = "EXP/Level TOP list",
 	privs = {
 		interact = true
@@ -351,6 +369,11 @@ minetest.register_chatcommand("xp_add_ft", {
 					return false, "*** Server: Tool already exists in the forbidden tool list."
 				end
 			end
+
+			if minetest.registered_items[forbidden_tool] == nil then
+				return false, "*** Server: The specified tool does not exist."
+			end
+
 			table.insert(forbidden_tools, forbidden_tool)
 			save_forbidden_tools()
 			return true, "*** Server: "..minetest.colorize("#01B5F7", name).." has added "..minetest.colorize("red", forbidden_tool).." to the forbidden tool list."
